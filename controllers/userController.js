@@ -10,9 +10,10 @@ module.exports = {
     },
     //get single user
     getSingleUser(req, res) {
-        User.findOne({_id: req.params.UserId})
-        //versionKey
-        //.populate???
+        User.findOne({_id: req.params.userId})
+        .populate('thoughts')
+        .populate('friends')
+        //version key
         .select('-__v')
         .then((user) =>
         !user
@@ -55,7 +56,7 @@ module.exports = {
               ? res
                   .status(404)
                   .json({ message: 'No user found with this id!' })
-                //delete all users thoughts
+                //delete users associated thoughts when the user is deleted.
                 : Thought.deleteMany({_id: {$in: user.thoughts}})
           )
           .then(() => res.json({message: 'User deleted!'}))
